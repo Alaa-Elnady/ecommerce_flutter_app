@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
+import 'package:ecommerce_flutter_app/screens/search_screen.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 import 'package:ecommerce_flutter_app/utils/storage_service.dart';
 
@@ -80,11 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Search functionality coming soon"),
-                ),
-              );
+              // showSearch(context: context, delegate: ProductSearchDelegate());
             },
           ),
         ],
