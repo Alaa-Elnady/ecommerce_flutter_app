@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
@@ -100,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(16.0),
               child: _isLoggedIn
                   ? Text(
-                      "Welcome, ${_username ?? "User"}",
+                      "Welcome, ${_username ?? "User"}!",
                       style: const TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 24,
@@ -370,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(right: 8),
                 child: ActionChip(
                   label: Text(
-                    category,
+                    category[0].toUpperCase() + category.substring(1),
                     style: const TextStyle(
                       fontFamily: 'Roboto',
                       color: textColor,
