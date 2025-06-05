@@ -90,7 +90,17 @@ class ECommerceApp extends StatelessWidget {
         buttonTheme: ButtonThemeData(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
       ),
+
       initialRoute: '/splash',
       routes: {
         '/splash': (context) => SplashScreen(),

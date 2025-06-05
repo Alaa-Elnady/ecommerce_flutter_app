@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // showSearch(context: context, delegate: ProductSearchDelegate());
+              showSearch(context: context, delegate: ProductSearchDelegate());
             },
           ),
         ],
@@ -161,23 +161,32 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            product.image,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
-                                  color: bacgroundColor,
-                                  child: const Center(
-                                    child: Text(
-                                      'Image failed to load',
-                                      style: TextStyle(color: textColor),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/product',
+                            arguments: product,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              product.image,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    color: bacgroundColor,
+                                    child: const Center(
+                                      child: Text(
+                                        'Image failed to load',
+                                        style: TextStyle(color: textColor),
+                                      ),
                                     ),
                                   ),
-                                ),
+                            ),
                           ),
                         ),
                       );
@@ -258,76 +267,81 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: products.length,
           itemBuilder: (context, index) {
             final product = products[index];
-            return Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Image.network(
-                      product.image,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: bacgroundColor,
-                        child: const Center(
-                          child: Text(
-                            'Image failed',
-                            style: TextStyle(color: textColor),
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/product', arguments: product);
+              },
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Image.network(
+                        product.image,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: bacgroundColor,
+                          child: const Center(
+                            child: Text(
+                              'Image failed',
+                              style: TextStyle(color: textColor),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          product.name,
-                          style: const TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 16,
-                            color: textColor,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '\$${product.price.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 14,
-                            color: primaryColor,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.favorite_border,
-                                color: primaryColor,
-                              ),
-                              onPressed: () => _handleAction(context),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.name,
+                            style: const TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 16,
+                              color: textColor,
                             ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.add_shopping_cart,
-                                color: primaryColor,
-                              ),
-                              onPressed: () => _handleAction(context),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            '\$${product.price.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 14,
+                              color: primaryColor,
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.favorite_border,
+                                  color: primaryColor,
+                                ),
+                                onPressed: () => _handleAction(context),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.add_shopping_cart,
+                                  color: primaryColor,
+                                ),
+                                onPressed: () => _handleAction(context),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
