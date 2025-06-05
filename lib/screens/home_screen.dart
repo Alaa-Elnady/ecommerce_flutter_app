@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
 import 'package:ecommerce_flutter_app/screens/search_screen.dart';
-import 'package:ecommerce_flutter_app/models/cart_item.dart';
+// import 'package:ecommerce_flutter_app/models/cart_item.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 import 'package:ecommerce_flutter_app/utils/storage_service.dart';
+import 'package:ecommerce_flutter_app/utils/cart_model.dart';
 import 'package:ecommerce_flutter_app/screens/app_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -66,13 +67,32 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _handleAction(BuildContext context) {
-    if (!_isLoggedIn) {
-      Navigator.pushNamed(context, "/login");
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Action requires implementation")),
-      );
+  void _handleAction(
+    BuildContext context, {
+    required String action,
+    Product? product,
+  }) async {
+    final storageService = StorageService();
+    bool isLoggedIn = await storageService.isLoggedIn();
+
+    if (action == 'add_to_cart' && product != null) {
+      if (isLoggedIn) {
+        try {
+          final cart = Provider.of<CartModel>(context, listen: false);
+          cart.addProduct(product, quantity: 1);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${product.name} added to cart')),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        }
+      } else {
+        Navigator.pushNamed(context, '/login', arguments: {'product': product});
+      }
+    } else if (action == 'favorite') {
+      // ... (unchanged)
     }
   }
 
@@ -133,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: const AppDrawer(), // Add the AppDrawer here
+      drawer: const AppDrawer(),
       backgroundColor: bacgroundColor,
       extendBodyBehindAppBar: false,
       body: Container(
@@ -392,14 +412,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Icons.favorite_border,
                                   color: primaryColor,
                                 ),
-                                onPressed: () => _handleAction(context),
+                                onPressed: () =>
+                                    _handleAction(context, action: 'favorite'),
                               ),
                               IconButton(
                                 icon: const Icon(
                                   Icons.add_shopping_cart,
                                   color: primaryColor,
                                 ),
-                                onPressed: () => _handleAction(context),
+                                onPressed: () => _handleAction(
+                                  context,
+                                  action: 'add_to_cart',
+                                  product: product,
+                                ),
                               ),
                             ],
                           ),

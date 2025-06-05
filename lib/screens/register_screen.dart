@@ -1,14 +1,17 @@
 import 'dart:io';
-import 'package:ecommerce_flutter_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ecommerce_flutter_app/utils/user_model.dart';
-// import 'package:ecommerce_flutter_app/screens/login_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:ecommerce_flutter_app/utils/cart_model.dart';
+import 'package:ecommerce_flutter_app/models/product.dart';
 import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  final Map<String, dynamic>? arguments;
+
+  const RegisterPage({super.key, this.arguments});
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -50,10 +53,28 @@ class _RegisterPageState extends State<RegisterPage> {
       await prefs.setString('users', jsonEncode(usersList));
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('currentUserEmail', user.email);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+
+      // Handle post-registration cart action
+      final product = widget.arguments?['product'] as Product?;
+      final quantity = widget.arguments?['quantity'] as int? ?? 1;
+      if (product != null) {
+        try {
+          final cart = Provider.of<CartModel>(context, listen: false);
+          cart.addProduct(product, quantity: quantity);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Added $quantity x ${product.name} to cart'),
+              backgroundColor: const Color(0xFF9C27B0),
+            ),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
@@ -76,7 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/default_profile.png'),
+            image: AssetImage('assets/images/circle design.png'),
             fit: BoxFit.cover,
             opacity: 0.8,
           ),

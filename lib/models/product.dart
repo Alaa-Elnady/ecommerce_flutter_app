@@ -1,37 +1,31 @@
 class Product {
   final String id;
   final String name;
-  final String category;
-  final String description;
   final double price;
-  final double discount;
   final String image;
+  final String? description;
+  final double? discount;
+  final int? stock;
 
   Product({
     required this.id,
     required this.name,
-    required this.category,
-    required this.description,
     required this.price,
-    required this.discount,
     required this.image,
+    this.description,
+    this.discount,
+    this.stock,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json["id"].toString(),
-      name: json["title"] ?? "",
-      category: json["category"] ?? "Uncategorized",
-      description: json["description"] ?? "",
-      price:
-          (json["price"] is int ? json["price"].toDouble() : json["price"]) ??
-          0,
-      discount:
-          (json["discount"] is int
-              ? json["discount"].toDouble()
-              : json["discount"]) ??
-          0,
-      image: json["image"] ?? 0,
+      id: json['id'].toString(),
+      name: json['name'],
+      price: (json['price'] as num).toDouble(),
+      image: json['image'],
+      description: json['description'],
+      discount: (json['discount'] as num?)?.toDouble(),
+      stock: json['stock'] as int?,
     );
   }
 }

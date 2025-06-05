@@ -9,8 +9,9 @@ import 'package:ecommerce_flutter_app/screens/home_screen.dart';
 import 'package:ecommerce_flutter_app/screens/product_detail_screen.dart';
 import 'package:ecommerce_flutter_app/screens/cart_screen.dart';
 import 'package:ecommerce_flutter_app/screens/category_products_screen.dart';
-import 'package:ecommerce_flutter_app/models/cart_item.dart';
+// import 'package:ecommerce_flutter_app/models/cart_item.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
+import 'package:ecommerce_flutter_app/utils/cart_model.dart';
 
 void main() {
   runApp(

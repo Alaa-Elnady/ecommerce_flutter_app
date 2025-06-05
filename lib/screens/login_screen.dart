@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ecommerce_flutter_app/utils/user_model.dart';
-import 'package:ecommerce_flutter_app/screens/register_screen.dart';
-import 'package:ecommerce_flutter_app/screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:ecommerce_flutter_app/utils/cart_model.dart';
+import 'package:ecommerce_flutter_app/models/product.dart';
 import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final Map<String, dynamic>? arguments;
+
+  const LoginPage({super.key, this.arguments});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -39,10 +42,28 @@ class _LoginPageState extends State<LoginPage> {
       if (user.email.isNotEmpty) {
         await prefs.setBool('isLoggedIn', _rememberMe);
         await prefs.setString('currentUserEmail', user.email);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+
+        // Handle post-login cart action
+        final product = widget.arguments?['product'] as Product?;
+        final quantity = widget.arguments?['quantity'] as int? ?? 1;
+        if (product != null) {
+          try {
+            final cart = Provider.of<CartModel>(context, listen: false);
+            cart.addProduct(product, quantity: quantity);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Added $quantity x ${product.name} to cart'),
+                backgroundColor: const Color(0xFF9C27B0),
+              ),
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            );
+          }
+        }
+
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Invalid email or password')),
@@ -147,11 +168,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterPage(),
-                        ),
+                        '/register',
+                        arguments: widget.arguments,
                       );
                     },
                     child: const Text(
