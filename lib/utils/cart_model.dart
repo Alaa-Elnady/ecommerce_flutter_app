@@ -44,6 +44,7 @@ class CartModel extends ChangeNotifier {
     final existingItemIndex = _items.indexWhere(
       (item) => item.productId == product.id.toString(),
     );
+
     if (existingItemIndex >= 0) {
       final newQuantity = _items[existingItemIndex].quantity + quantity;
       if (product.stock != null && newQuantity > product.stock!) {

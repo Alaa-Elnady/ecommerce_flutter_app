@@ -5,7 +5,6 @@ import 'package:ecommerce_flutter_app/screens/login_screen.dart';
 import 'package:ecommerce_flutter_app/screens/register_screen.dart';
 import 'package:ecommerce_flutter_app/screens/home_screen.dart';
 // import 'package:ecommerce_flutter_app/screens/order_screen.dart';
-// import 'package:ecommerce_flutter_app/screens/search_screen.dart';
 import 'package:ecommerce_flutter_app/screens/product_detail_screen.dart';
 import 'package:ecommerce_flutter_app/screens/cart_screen.dart';
 import 'package:ecommerce_flutter_app/screens/category_products_screen.dart';
@@ -23,7 +22,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,6 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         // '/orders': (context) => const OrdersPage(),
         '/cart': (context) => const CartScreen(),
-        // '/search': (context) => const ProductSearchScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/product') {

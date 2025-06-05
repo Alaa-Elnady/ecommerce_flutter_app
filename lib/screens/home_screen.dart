@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
 import 'package:ecommerce_flutter_app/screens/search_screen.dart';
-// import 'package:ecommerce_flutter_app/models/cart_item.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 import 'package:ecommerce_flutter_app/utils/storage_service.dart';
 import 'package:ecommerce_flutter_app/utils/cart_model.dart';
 import 'package:ecommerce_flutter_app/screens/app_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:ecommerce_flutter_app/models/product.dart';
 
 // Theme Colors
-const Color primaryColor = Color(0xFFc085ee); // Vibrant green
-const Color accentColor = Color(0xFFFF9800); // // Warm orange
+const Color primaryColor = Color(0xFFc085ee);
+const Color accentColor = Color(0xFFFF9800);
 const Color bacgroundColor = Color(0xFFF5F5F5); // Light gray
 const Color textColor = Color(0xFF333333); // Dark gray
 
