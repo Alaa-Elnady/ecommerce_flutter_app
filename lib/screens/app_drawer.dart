@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ecommerce_flutter_app/screens/home_screen.dart';
-// import 'package:ecommerce_flutter_app/screens/order_screen.dart';
+import 'package:ecommerce_flutter_app/screens/order_screen.dart';
 import 'package:ecommerce_flutter_app/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,16 +40,16 @@ class AppDrawer extends StatelessWidget {
               );
             },
           ),
-          // ListTile(
-          //   leading: const Icon(Icons.shopping_cart),
-          //   title: const Text('Orders'),
-          //   onTap: () {
-          //     Navigator.pushReplacement(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => const OrderScreen()),
-          //     );
-          //   },
-          // ),
+          ListTile(
+            leading: const Icon(Icons.shopping_cart),
+            title: const Text('Orders'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const OrdersPage()),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),

@@ -4,7 +4,7 @@ import 'package:ecommerce_flutter_app/screens/splash_screen.dart';
 import 'package:ecommerce_flutter_app/screens/login_screen.dart';
 import 'package:ecommerce_flutter_app/screens/register_screen.dart';
 import 'package:ecommerce_flutter_app/screens/home_screen.dart';
-// import 'package:ecommerce_flutter_app/screens/order_screen.dart';
+import 'package:ecommerce_flutter_app/screens/order_screen.dart';
 import 'package:ecommerce_flutter_app/screens/product_detail_screen.dart';
 import 'package:ecommerce_flutter_app/screens/cart_screen.dart';
 import 'package:ecommerce_flutter_app/screens/category_products_screen.dart';
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const HomeScreen(),
-        // '/orders': (context) => const OrdersPage(),
+        '/orders': (context) => const OrdersPage(),
         '/cart': (context) => const CartScreen(),
       },
       onGenerateRoute: (settings) {
