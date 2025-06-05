@@ -6,6 +6,7 @@ import 'package:ecommerce_flutter_app/screens/search_screen.dart';
 import 'package:ecommerce_flutter_app/models/cart_item.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 import 'package:ecommerce_flutter_app/utils/storage_service.dart';
+import 'package:ecommerce_flutter_app/screens/app_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -79,11 +80,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AlMostShop"),
+        title: const Text(
+          "AlMostShop",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: primaryColor,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.search, color: Colors.white),
             onPressed: () {
               showSearch(context: context, delegate: ProductSearchDelegate());
             },
@@ -91,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Stack(
             children: [
               IconButton(
-                icon: const Icon(Icons.shopping_cart),
+                icon: const Icon(Icons.shopping_cart, color: Colors.white),
                 onPressed: () {
                   Navigator.pushNamed(context, '/cart');
                 },
@@ -123,130 +133,149 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+      drawer: const AppDrawer(), // Add the AppDrawer here
       backgroundColor: bacgroundColor,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Welcome Section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _isLoggedIn
-                  ? Text(
-                      "Welcome, ${_username ?? "User"}!",
-                      style: const TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 24,
-                        color: textColor,
-                        fontWeight: FontWeight.w600,
+      extendBodyBehindAppBar: false,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/circle design.png'),
+            fit: BoxFit.cover,
+            opacity: 0.8,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Welcome Section
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _isLoggedIn
+                    ? Text(
+                        "Welcome, ${_username ?? "User"}!",
+                        style: const TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 24,
+                          color: textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () =>
+                                Navigator.pushNamed(context, "/register"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              "Register",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          ElevatedButton(
+                            onPressed: () =>
+                                Navigator.pushNamed(context, '/login'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, "/register"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text("Register"),
-                        ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/login'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Login'),
-                        ),
-                      ],
-                    ),
-            ),
+              ),
 
-            // Product Slider
-            FutureBuilder<List<Product>>(
-              future: _productsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: primaryColor),
-                  );
-                }
-                if (snapshot.hasError ||
-                    !snapshot.hasData ||
-                    snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'Failed to load slider',
-                      style: TextStyle(color: textColor),
-                    ),
-                  );
-                }
-                final products = snapshot.data!.take(5).toList();
-                return SizedBox(
-                  height: 200,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: products.length,
-                    itemBuilder: (context, index) {
-                      final product = products[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/product',
-                            arguments: product,
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              product.image,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                    color: bacgroundColor,
-                                    child: const Center(
-                                      child: Text(
-                                        'Image failed to load',
-                                        style: TextStyle(color: textColor),
+              // Product Slider
+              FutureBuilder<List<Product>>(
+                future: _productsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: primaryColor),
+                    );
+                  }
+                  if (snapshot.hasError ||
+                      !snapshot.hasData ||
+                      snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Failed to load slider',
+                        style: TextStyle(color: textColor),
+                      ),
+                    );
+                  }
+                  final products = snapshot.data!.take(5).toList();
+                  return SizedBox(
+                    height: 200,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/product',
+                              arguments: product,
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                product.image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      color: bacgroundColor,
+                                      child: const Center(
+                                        child: Text(
+                                          'Image failed to load',
+                                          style: TextStyle(color: textColor),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
 
-            // Featured Products
-            _sectionTitle('Featured Products'),
-            _buildProductGrid(_productsFuture, takeLast: false),
+              // Featured Products
+              _sectionTitle('Featured Products'),
+              _buildProductGrid(_productsFuture, takeLast: false),
 
-            // Categories
-            _sectionTitle('Categories'),
-            _buildCategoriesList(),
+              // Categories
+              _sectionTitle('Categories'),
+              _buildCategoriesList(),
 
-            // New Arrivals
-            _sectionTitle('New Arrivals'),
-            _buildProductGrid(_productsFuture, takeLast: true),
+              // New Arrivals
+              _sectionTitle('New Arrivals'),
+              _buildProductGrid(_productsFuture, takeLast: true),
 
-            const SizedBox(height: 16),
-          ],
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
