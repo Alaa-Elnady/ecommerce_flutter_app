@@ -1,40 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/product.dart';
+import 'package:ecommerce_flutter_app/models/product.dart';
 
 // Theme Colors
-const Color primaryColor = Color(0xFF4CAF50); // Vibrant green
+const Color primaryColor = Color(0xFFc085ee); // Vibrant green
 const Color accentColor = Color(0xFFFF9800); // // Warm orange
 const Color bacgroundColor = Color(0xFFF5F5F5); // Light gray
 const Color textColor = Color(0xFF333333); // Dark gray
 
-// API URLs for (products & categories)
-const String ProductsApiUrl =
-    "https://ib.jamalmoallart.com/api/v1/all/products";
-const String CategoriesApiUrl =
-    "https://ib.jamalmoallart.com/api/v1/all/categories";
+// API URLs
+const String baseUrl = 'https://ib.jamalmoallart.com/api/v1';
+const String allProductsUrl = '$baseUrl/all/products';
+const String categoriesUrl = '$baseUrl/all/categories';
 
 // Fetch Products from API
 Future<List<Product>> fetchProducts() async {
   try {
-    final response = await http.get(Uri.parse(ProductsApiUrl));
+    final response = await http.get(Uri.parse(allProductsUrl));
     if (response.statusCode == 200) {
-      List<dynamic> jsonData = json.decode(response.body);
+      final List<dynamic> jsonData = json.decode(response.body);
       return jsonData.map((json) => Product.fromJson(json)).toList();
     } else {
       throw Exception("Failed to load products: ${response.statusCode}");
     }
   } catch (e) {
-    print("Error fetching products: $e");
-    return []; // Return empty list in error
+    throw Exception('Error fetching products: $e');
   }
 }
 
 // Fetch Categories from API
 Future<List<String>> fetchCategories() async {
   try {
-    final response = await http.get(Uri.parse(CategoriesApiUrl));
+    final response = await http.get(Uri.parse(categoriesUrl));
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
       return jsonData.cast<String>();
@@ -42,16 +40,6 @@ Future<List<String>> fetchCategories() async {
       throw Exception("Failed to load categories: ${response.statusCode}");
     }
   } catch (e) {
-    print("Error fetching categories: $e");
-    return [
-      "Computers",
-      "Mobiles",
-      "Audio",
-      "Accessories",
-      "Tablets",
-      "TVs",
-      "Cameras",
-      "Wearables",
-    ];
+    throw Exception('Error fetching categories: $e');
   }
 }

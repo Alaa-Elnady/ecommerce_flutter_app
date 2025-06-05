@@ -131,196 +131,249 @@ void main() {
 
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 // import 'package:flutter/material.dart';
 // import 'package:flutter_test/flutter_test.dart';
+// import 'package:provider/provider.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:ecommerce_flutter_app/models/product.dart';
 // import 'package:ecommerce_flutter_app/screens/home_screen.dart';
+// import 'package:ecommerce_flutter_app/screens/product_detail_screen.dart';
+// import 'package:ecommerce_flutter_app/screens/cart_screen.dart';
+// import 'package:ecommerce_flutter_app/models/cart_item.dart';
 // import 'package:ecommerce_flutter_app/utils/constants.dart';
 
-// // Fake fetchProducts for testing
+// // Mock SharedPreferences for testing
+// class MockSharedPreferences {
+//   String? savedData;
+  
+//   String? getString(String key) => savedData;
+//   Future<bool> setString(String key, String value) async {
+//     savedData = value;
+//     return true;
+//   }
+// }
+
+// // Testable CartModel that uses our mock
+// class TestableCartModel extends CartModel {
+//   final MockSharedPreferences mockPrefs = MockSharedPreferences();
+  
+//   @override
+//   Future<void> _saveToPrefs() async {
+//     final cartData = jsonEncode(_items.map((item) => item.toJson()).toList());
+//     await mockPrefs.setString('cart', cartData);
+//   }
+  
+//   @override
+//   Future<void> loadFromPrefs() async {
+//     final cartData = mockPrefs.getString('cart');
+//     if (cartData != null) {
+//       final List<dynamic> json = jsonDecode(cartData);
+//       _items = json.map((item) => CartItem.fromJson(item)).toList();
+//       notifyListeners();
+//     }
+//   }
+// }
+
+// // Test products
+// final testProduct1 = Product(
+//   id: '1',
+//   name: 'Test Shirt',
+//   description: 'Test product description',
+//   price: 29.99,
+//   image: 'https://example.com/image1.jpg',
+//   category: 'Clothing',
+//   discount: 5.0,
+// );
+
+// final testProduct2 = Product(
+//   id: '2',
+//   name: 'Test Jacket',
+//   description: 'Test jacket description',
+//   price: 59.99,
+//   image: 'https://example.com/image2.jpg',
+//   category: 'Clothing',
+//   discount: 10.0,
+// );
+
+// // Fake API calls
 // Future<List<Product>> fakeFetchProducts() async {
-//   return [
-//     Product(
-//       id: '1',
-//       name: 'Test Shirt',
-//       description: 'A test shirt',
-//       price: 29.99,
-//       image: 'https://example.com/shirt.jpg',
-//       category: "men's clothing",
-//     ),
-//     Product(
-//       id: '2',
-//       name: 'Test Jacket',
-//       description: 'A test jacket',
-//       price: 59.99,
-//       image: 'https://example.com/jacket.jpg',
-//       category: "men's clothing",
-//     ),
-//   ];
+//   await Future.delayed(const Duration(milliseconds: 100));
+//   return [testProduct1, testProduct2];
 // }
 
-// // Fake fetchCategories for testing
 // Future<List<String>> fakeFetchCategories() async {
-//   return ["men's clothing", 'electronics'];
-// }
-
-// void main() {
-//   testWidgets('HomeScreen search icon opens search bar and displays results', (WidgetTester tester) async {
-//     // Store original fetchProducts and fetchCategories
-//     final originalFetchProducts = fetchProducts;
-//     final originalFetchCategories = fetchCategories;
-
-//     // Override with fake implementations
-//     fetchProducts = fakeFetchProducts;
-//     fetchCategories = fakeFetchCategories;
-
-//     // Build the HomeScreen widget
-//     await tester.pumpWidget(
-//       MaterialApp(
-//         theme: ThemeData(
-//           primaryColor: primaryColor,
-//           colorScheme: ColorScheme.fromSwatch(
-//             primarySwatch: Colors.green,
-//             accentColor: accentColor,
-//           ).copyWith(
-//             secondary: accentColor,
-//             background: bacgroundColor,
-//           ),
-//           scaffoldBackgroundColor: bacgroundColor,
-//           textTheme: const TextTheme(
-//             bodyLarge: TextStyle(color: textColor, fontFamily: 'Roboto'),
-//             bodyMedium: TextStyle(color: textColor, fontFamily: 'Roboto'),
-//           ),
-//         ),
-//         home: const HomeScreen(),
-//         routes: {
-//           '/product': (context) => const Placeholder(), // Mock ProductDetailScreen
-//         },
-//       ),
-//     );
-
-//     // Allow async operations to complete
-//     await tester.pumpAndSettle();
-
-//     // Verify the AppBar title
-//     expect(find.text('AlMostShop'), findsOneWidget);
-
-//     // Tap the search icon
-//     await tester.tap(find.byIcon(Icons.search));
-//     await tester.pumpAndSettle();
-
-//     // Verify the search bar is open by checking for the TextField
-//     expect(find.byType(TextField), findsOneWidget);
-
-//     // Enter a search query
-//     await tester.enterText(find.byType(TextField), 'shirt');
-//     await tester.pumpAndSettle();
-
-//     // Verify search results
-//     expect(find.text('Test Shirt'), findsOneWidget);
-//     expect(find.byType(Card), findsOneWidget);
-
-//     // Restore original fetchProducts and fetchCategories
-//     fetchProducts = originalFetchProducts;
-//     fetchCategories = originalFetchCategories;
-//   });
-// }
-
-
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:ecommerce_flutter_app/models/product.dart';
-// import 'package:ecommerce_flutter_app/screens/home_screen.dart';
-// import 'package:ecommerce_flutter_app/utils/constants.dart';
-
-// // Fake fetchProducts for testing
-// Future<List<Product>> fetchProducts() async {
-//   return [
-//     Product(
-//       id: '1',
-//       name: 'Test Shirt',
-//       description: 'Test product description',
-//       price: 29.999,
-//       image: 'https://example.com/image1.jpg',
-//       category: 'Clothing',
-//       discount: 5.0,
-//     ),
-//     Product(
-//       id: '2',
-//       name: 'Test Jacket',
-//       description: 'Test jacket description',
-//       price: 59.999,
-//       image: 'https://example.com/image2.jpg',
-//       category: 'Clothing',
-//       discount: 10.0,
-//     ),
-//   ];
-// }
-
-// // Fake fetchCategories for testing
-// Future<List<String>> fetchCategories() async {
+//   await Future.delayed(const Duration(milliseconds: 100));
 //   return ['Clothing', 'Electronics'];
 // }
 
 // void main() {
-//   testWidgets('HomeScreen search icon opens search bar and displays results', (WidgetTester tester) async {
-//     // Store original fetch functions
-//     final originalFetchProducts = fetchProducts;
-//     final originalFetchCategories = fetchCategories;
+//   // Store original functions
+//   late Future<List<Product>> Function() originalFetchProducts;
+//   late Future<List<String>> Function() originalFetchCategories;
 
-//     // Override with fake implementations
-//     fetchProducts = fetchProducts;
-//     fetchCategories = fetchCategories;
+//   setUp(() {
+//     originalFetchProducts = fetchProducts;
+//     originalFetchCategories = fetchCategories;
+//     fetchProducts = fakeFetchProducts;
+//     fetchCategories = fakeFetchCategories;
+    
+//     // Initialize mock preferences
+//     SharedPreferences.setMockInitialValues({});
+//   });
 
-//     // Build the HomeScreen widget
-//     await tester.pumpWidget(
-//       MaterialApp(
-//         title: 'AlmostShop',
+//   tearDown(() {
+//     fetchProducts = originalFetchProducts;
+//     fetchCategories = originalFetchCategories;
+//   });
+
+//   // Helper function to build the app with CartModel
+//   Widget buildTestApp(Widget home) {
+//     return ChangeNotifierProvider(
+//       create: (context) => TestableCartModel(),
+//       child: MaterialApp(
+//         title: 'AlMostShop',
 //         theme: ThemeData(
 //           primaryColor: primaryColor,
 //           colorScheme: ColorScheme.fromSwatch(
 //             primarySwatch: Colors.green,
 //           ).copyWith(
 //             secondary: accentColor,
-//             background: bacgroundColor,
-//           scaffoldBackgroundColor: bacgroundColor,
+//             background: backgroundColor,
+//           ),
+//           scaffoldBackgroundColor: backgroundColor,
 //           textTheme: const TextTheme(
 //             bodyLarge: TextStyle(color: textColor, fontFamily: 'Roboto'),
 //             bodyMedium: TextStyle(color: textColor, fontFamily: 'Roboto'),
 //           ),
+//           elevatedButtonTheme: ElevatedButtonThemeData(
+//             style: ElevatedButton.styleFrom(
+//               backgroundColor: primaryColor,
+//               foregroundColor: Colors.white,
+//               shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(8),
+//             ),
+//           ),
 //         ),
-//         home: const HomeScreen(),
+//         home: home,
 //         routes: {
-//           '/product': (context) => const Placeholder(), // Mock ProductDetailScreen
+//           '/product': (context) => ProductDetailScreen(
+//                 product: ModalRoute.of(context)!.settings.arguments as Product,
+//               ),
+//           '/cart': (context) => const CartScreen(),
 //         },
 //       ),
 //     );
+//   }
 
-//     // Allow async operations to complete
+//   testWidgets('HomeScreen displays products', (WidgetTester tester) async {
+//     await tester.pumpWidget(buildTestApp(const HomeScreen()));
+//     await tester.pumpAndSettle(); // Wait for products to load
+    
+//     expect(find.text('Test Shirt'), findsOneWidget);
+//     expect(find.text('Test Jacket'), findsOneWidget);
+//   });
+
+//   testWidgets('HomeScreen search works', (WidgetTester tester) async {
+//     await tester.pumpWidget(buildTestApp(const HomeScreen()));
 //     await tester.pumpAndSettle();
-
-//     // Verify the AppBar title
-//     expect(find.text('AlMostShop'), findsOneWidget);
-
-//     // Tap the search icon
+    
+//     // Tap search icon
 //     await tester.tap(find.byIcon(Icons.search));
 //     await tester.pumpAndSettle();
-
-//     // Verify the search bar is open by checking for the TextField
-//     expect(find.byType(TextField), findsOneWidget);
-
-//     // Enter a search query
+    
+//     // Enter search text
 //     await tester.enterText(find.byType(TextField), 'shirt');
 //     await tester.pumpAndSettle();
-
-//     // Verify search results
+    
+//     // Verify results
 //     expect(find.text('Test Shirt'), findsOneWidget);
-//     expect(find.byType(Card), findsOneWidget);
+//     expect(find.text('Test Jacket'), findsNothing);
+//   });
 
-//     // Restore original fetch functions
-//     fetchProducts = originalFetchProducts;
-//     fetchCategories = originalFetchCategories;
+//   testWidgets('ProductDetailScreen shows product details', (tester) async {
+//     await tester.pumpWidget(buildTestApp(
+//       ProductDetailScreen(product: testProduct1),
+//     ));
+//     await tester.pumpAndSettle();
+    
+//     expect(find.text('Test Shirt'), findsNWidgets(2)); // Title and in body
+//     expect(find.text('\$28.49'), findsOneWidget); // Discounted price
+//     expect(find.text('5.0% off'), findsOneWidget);
+//   });
+
+//   testWidgets('Can add product to cart', (tester) async {
+//     await tester.pumpWidget(buildTestApp(
+//       ProductDetailScreen(product: testProduct1),
+//     ));
+//     await tester.pumpAndSettle();
+    
+//     // Tap add to cart button
+//     await tester.tap(find.text('Add to Cart'));
+//     await tester.pumpAndSettle();
+    
+//     // Verify snackbar appears
+//     expect(find.text('Added 1 x Test Shirt to cart'), findsOneWidget);
+//   });
+
+//   testWidgets('CartScreen shows items and totals', (tester) async {
+//     final cart = TestableCartModel();
+//     cart.addProduct(testProduct1, 2); // This adds to cache automatically
+    
+//     await tester.pumpWidget(
+//       ChangeNotifierProvider.value(
+//         value: cart,
+//         child: const MaterialApp(home: CartScreen()),
+//       ),
+//     );
+//     await tester.pumpAndSettle();
+    
+//     // Verify items
+//     expect(find.text('Test Shirt'), findsOneWidget);
+//     expect(find.text('2'), findsOneWidget); // Quantity
+//     expect(find.text('\$56.98'), findsOneWidget); // Total (2 * 28.49)
+//   });
+
+//   testWidgets('Can remove item from cart', (tester) async {
+//     final cart = TestableCartModel();
+//     cart.addProduct(testProduct1, 1);
+    
+//     await tester.pumpWidget(
+//       ChangeNotifierProvider.value(
+//         value: cart,
+//         child: const MaterialApp(home: CartScreen()),
+//       ),
+//     );
+//     await tester.pumpAndSettle();
+    
+//     // Verify item exists
+//     expect(find.text('Test Shirt'), findsOneWidget);
+    
+//     // Tap delete button
+//     await tester.tap(find.byIcon(Icons.delete));
+//     await tester.pumpAndSettle();
+    
+//     // Verify empty state
+//     expect(find.text('Your cart is empty'), findsOneWidget);
+//   });
+
+//   testWidgets('Can place order', (tester) async {
+//     final cart = TestableCartModel();
+//     cart.addProduct(testProduct1, 1);
+    
+//     await tester.pumpWidget(
+//       ChangeNotifierProvider.value(
+//         value: cart,
+//         child: const MaterialApp(home: CartScreen()),
+//       ),
+//     );
+//     await tester.pumpAndSettle();
+    
+//     // Place order
+//     await tester.tap(find.text('Place Order'));
+//     await tester.pumpAndSettle();
+    
+//     // Verify success message
+//     expect(find.text('Order placed successfully'), findsOneWidget);
+//     expect(find.text('Your cart is empty'), findsOneWidget);
 //   });
 // }

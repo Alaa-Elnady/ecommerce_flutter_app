@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
 import 'package:ecommerce_flutter_app/screens/search_screen.dart';
+import 'package:ecommerce_flutter_app/models/cart_item.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 import 'package:ecommerce_flutter_app/utils/storage_service.dart';
 
@@ -28,6 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _categoriesFuture = fetchCategories();
     _checkLoginStatus();
     _startAutoScroll();
+    // Load cart data
+    Provider.of<CartModel>(context, listen: false).loadFromPrefs();
   }
 
   void _startAutoScroll() {
@@ -83,6 +87,39 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               showSearch(context: context, delegate: ProductSearchDelegate());
             },
+          ),
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/cart');
+                },
+              ),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Consumer<CartModel>(
+                  builder: (context, cart, child) => cart.items.isEmpty
+                      ? const SizedBox.shrink()
+                      : Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: accentColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${cart.items.length}',
+                            style: const TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

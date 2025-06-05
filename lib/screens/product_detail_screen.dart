@@ -121,7 +121,9 @@
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
+import 'package:ecommerce_flutter_app/models/cart_item.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -153,10 +155,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _addToCart() {
+    final cartModel = Provider.of<CartModel>(context, listen: false);
+    cartModel.addProduct(widget.product, _quantity);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Added ${_quantity} x ${widget.product.name} to cart',
+          'Added $_quantity x ${widget.product.name} to cart',
           style: const TextStyle(fontFamily: 'Roboto'),
         ),
         backgroundColor: primaryColor,

@@ -58,15 +58,23 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
+import 'package:ecommerce_flutter_app/models/cart_item.dart';
 import 'package:ecommerce_flutter_app/screens/splash_screen.dart';
 import 'package:ecommerce_flutter_app/screens/home_screen.dart';
 import 'package:ecommerce_flutter_app/screens/category_products_screen.dart';
 import 'package:ecommerce_flutter_app/screens/product_detail_screen.dart';
+import 'package:ecommerce_flutter_app/screens/cart_screen.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 
 void main() {
-  runApp(const ECommerceApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CartModel(),
+      child: const ECommerceApp(),
+    ),
+  );
 }
 
 class ECommerceApp extends StatelessWidget {
@@ -100,7 +108,6 @@ class ECommerceApp extends StatelessWidget {
           ),
         ),
       ),
-
       initialRoute: '/splash',
       routes: {
         '/splash': (context) => SplashScreen(),
@@ -111,6 +118,7 @@ class ECommerceApp extends StatelessWidget {
         '/product': (context) => ProductDetailScreen(
           product: ModalRoute.of(context)!.settings.arguments as Product,
         ),
+        '/cart': (context) => const CartScreen(),
         // Uncomment when LoginScreen and RegisterScreen are implemented
         // '/login': (context) => LoginScreen(),
         // '/register': (context) => RegisterScreen(),
