@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce_flutter_app/screens/home_screen.dart';
 import 'package:ecommerce_flutter_app/screens/order_screen.dart';
 import 'package:ecommerce_flutter_app/screens/login_screen.dart';
+import 'package:ecommerce_flutter_app/screens/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+  const AppDrawer({super.key});
+
+  // Method to get the stored token
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +55,31 @@ class AppDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (context) => const OrdersPage()),
               );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Profile'),
+            onTap: () async {
+              final token = await _getToken();
+              if (token != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(token: token),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('No token found, please log in again.'),
+                  ),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              }
             },
           ),
           ListTile(

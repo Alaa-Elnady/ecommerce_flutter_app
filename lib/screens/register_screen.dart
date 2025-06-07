@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/utils/cart_model.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
 import 'dart:convert';
+import 'dart:math';
 
 class RegisterPage extends StatefulWidget {
   final Map<String, dynamic>? arguments;
@@ -39,6 +40,13 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       final prefs = await SharedPreferences.getInstance();
+      // Generate a random token (e.g., 32-character hex string)
+      final random = Random.secure();
+      final token = List<int>.generate(
+        16,
+        (_) => random.nextInt(256),
+      ).map((e) => e.toRadixString(16).padLeft(2, '0')).join();
+
       final user = UserModel(
         name: _nameController.text,
         email: _emailController.text,
@@ -46,6 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
         address: _addressController.text,
         password: _passwordController.text,
         profileImagePath: _profileImage?.path,
+        token: token, // Add token to user model
       );
       final usersJson = prefs.getString('users') ?? '[]';
       final List<dynamic> usersList = jsonDecode(usersJson);
@@ -53,6 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
       await prefs.setString('users', jsonEncode(usersList));
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('currentUserEmail', user.email);
+      await prefs.setString('token', token); // Store token in SharedPreferences
 
       // Handle post-registration cart action
       final product = widget.arguments?['product'] as Product?;
@@ -97,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/circle design.png'),
+            image: AssetImage('assets/images/default_profile.png'),
             fit: BoxFit.cover,
             opacity: 0.8,
           ),

@@ -5,6 +5,7 @@ class UserModel {
   final String address;
   final String password;
   final String? profileImagePath;
+  final String token;
 
   UserModel({
     required this.name,
@@ -13,27 +14,26 @@ class UserModel {
     required this.address,
     required this.password,
     this.profileImagePath,
+    required this.token,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'email': email,
-      'phone': phone,
-      'address': address,
-      'password': password,
-      'profileImagePath': profileImagePath,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'email': email,
+    'phone': phone,
+    'address': address,
+    'password': password,
+    'profileImagePath': profileImagePath,
+    'token': token,
+  };
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      address: json['address'],
-      password: json['password'],
-      profileImagePath: json['profileImagePath'],
-    );
-  }
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+    name: json['name'],
+    email: json['email'],
+    phone: json['phone'],
+    address: json['address'],
+    password: json['password'],
+    profileImagePath: json['profileImagePath'],
+    token: json['token'] ?? '',
+  );
 }

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/utils/cart_model.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
 import 'dart:convert';
+import 'dart:math';
 
 class LoginPage extends StatefulWidget {
   final Map<String, dynamic>? arguments;
@@ -37,11 +38,39 @@ class _LoginPageState extends State<LoginPage> {
           phone: '',
           address: '',
           password: '',
+          token: '',
         ),
       );
+
       if (user.email.isNotEmpty) {
+        // Use the token stored with the user, or generate one if not present
+        String token = user.token.isNotEmpty
+            ? user.token
+            : _generateRandomToken();
         await prefs.setBool('isLoggedIn', _rememberMe);
         await prefs.setString('currentUserEmail', user.email);
+        await prefs.setString('token', token); // Store the token
+
+        // Update user list with token if it was generated
+        if (user.token.isEmpty) {
+          final userIndex = users.indexWhere((u) => u.email == user.email);
+          if (userIndex != -1) {
+            // Manually create a new UserModel instance with the updated token
+            users[userIndex] = UserModel(
+              name: user.name,
+              email: user.email,
+              phone: user.phone,
+              address: user.address,
+              password: user.password,
+              profileImagePath: user.profileImagePath,
+              token: token,
+            );
+            await prefs.setString(
+              'users',
+              jsonEncode(users.map((u) => u.toJson()).toList()),
+            );
+          }
+        }
 
         // Handle post-login cart action
         final product = widget.arguments?['product'] as Product?;
@@ -70,6 +99,14 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     }
+  }
+
+  String _generateRandomToken() {
+    final random = Random.secure();
+    return List<int>.generate(
+      16,
+      (_) => random.nextInt(256),
+    ).map((e) => e.toRadixString(16).padLeft(2, '0')).join();
   }
 
   @override
