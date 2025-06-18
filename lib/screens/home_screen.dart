@@ -91,7 +91,12 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.pushNamed(context, '/login', arguments: {'product': product});
       }
     } else if (action == 'favorite') {
-      // ... (unchanged)
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Favorite feature not implemented'),
+          backgroundColor: primaryColor,
+        ),
+      );
     }
   }
 
