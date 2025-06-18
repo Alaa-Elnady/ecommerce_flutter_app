@@ -40,13 +40,29 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/default_profile.png'),
+            image: NetworkImage(
+              'https://images.unsplash.com/photo-1522199710521-72d69614c702?auto=format&fit=crop&w=1400&q=80',
+            ),
             fit: BoxFit.cover,
             opacity: 0.8,
           ),
         ),
         child: const Center(
-          child: CircularProgressIndicator(color: Color(0xFF9C27B0)),
+          child: Text(
+            'AlMostShop',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  blurRadius: 8,
+                  color: Colors.black54,
+                  offset: Offset(2, 2),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
