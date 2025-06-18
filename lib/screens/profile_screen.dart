@@ -5,9 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ecommerce_flutter_app/utils/constants.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String token;
-
-  const ProfileScreen({super.key, required this.token});
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -37,11 +35,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchProfileData() async {
-    final url = Uri.parse(
-      'https://ib.jamalmoallart.com/api/v2/profile/${widget.token}',
-    );
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    print("token is: '$token'");
+
+    if (token.isEmpty) {
+      setState(() {
+        _nameController.text = "Not logged in";
+        _emailController.text = "Login required";
+      });
+      return;
+    }
+
+    final url = Uri.parse('https://ib.jamalmoallart.com/api/v2/profile');
     try {
-      final response = await http.get(url);
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -110,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               radius: 50,
               backgroundImage: NetworkImage(_imageUrlController.text),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _isEditing
                 ? TextField(
                     controller: _nameController,
@@ -129,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: textColor,
                     ),
                   ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _isEditing
                 ? TextField(
                     controller: _emailController,
@@ -147,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: textColor.withOpacity(0.7),
                     ),
                   ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _isEditing
                 ? TextField(
                     controller: _imageUrlController,
@@ -158,19 +177,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fillColor: Colors.white,
                     ),
                   )
-                : SizedBox.shrink(),
-            SizedBox(height: 30),
+                : const SizedBox.shrink(),
+            const SizedBox(height: 30),
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(accentColor),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
               ),
-              onPressed: () {
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(SnackBar(content: Text("Logged out")));
+                Navigator.pop(context);
               },
-              child: Text("Logout"),
+              child: const Text("Logout"),
             ),
           ],
         ),

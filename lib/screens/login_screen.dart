@@ -4,6 +4,7 @@ import 'package:ecommerce_flutter_app/utils/user_model.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce_flutter_app/utils/cart_model.dart';
 import 'package:ecommerce_flutter_app/models/product.dart';
+import 'package:ecommerce_flutter_app/utils/storage_service.dart';
 import 'dart:convert';
 import 'dart:math';
 
@@ -22,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
 
+  final StorageService _storageService = StorageService();
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       final prefs = await SharedPreferences.getInstance();
@@ -43,19 +45,18 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (user.email.isNotEmpty) {
-        // Use the token stored with the user, or generate one if not present
         String token = user.token.isNotEmpty
             ? user.token
             : _generateRandomToken();
-        await prefs.setBool('isLoggedIn', _rememberMe);
-        await prefs.setString('currentUserEmail', user.email);
-        await prefs.setString('token', token); // Store the token
 
-        // Update user list with token if it was generated
+        await prefs.setString('token', token);
+        await prefs.setString('userEmail', user.email);
+
+        await _storageService.saveLoginData(email: user.email, token: token);
+
         if (user.token.isEmpty) {
           final userIndex = users.indexWhere((u) => u.email == user.email);
           if (userIndex != -1) {
-            // Manually create a new UserModel instance with the updated token
             users[userIndex] = UserModel(
               name: user.name,
               email: user.email,
@@ -72,7 +73,6 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
 
-        // Handle post-login cart action
         final product = widget.arguments?['product'] as Product?;
         final quantity = widget.arguments?['quantity'] as int? ?? 1;
         if (product != null) {
@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/circle design.png'),
+            image: AssetImage('assets/images/default_profile.png'),
             fit: BoxFit.cover,
             opacity: 0.8,
           ),

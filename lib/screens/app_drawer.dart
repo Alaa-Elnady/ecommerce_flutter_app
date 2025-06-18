@@ -8,12 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
-  // Method to get the stored token
-  Future<String?> _getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -51,27 +45,24 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.person),
             title: const Text('Profile'),
             onTap: () async {
-              final token = await _getToken();
-              if (token != null) {
+              final prefs = await SharedPreferences.getInstance();
+              final token = prefs.getString('userToken') ?? '';
+
+              if (token.isNotEmpty) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileScreen(token: token),
+                    builder: (context) => const ProfileScreen(),
                   ),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('No token found, please log in again.'),
-                  ),
-                );
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  SnackBar(content: Text("You must log in first.")),
                 );
               }
             },
           ),
+
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
