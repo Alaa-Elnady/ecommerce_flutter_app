@@ -14,6 +14,7 @@ class StorageService {
     final email = prefs.getString('currentUserEmail');
     if (email == null) return null;
     final usersJson = prefs.getString('users') ?? '[]';
+    print(usersJson);
     final List<dynamic> usersList = jsonDecode(usersJson);
     final user = usersList.firstWhere(
       (u) => u['email'] == email,
@@ -36,7 +37,7 @@ class StorageService {
   // Get saved token
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('userToken');
+    return prefs.getString('token');
   }
 
   // Clear user login data

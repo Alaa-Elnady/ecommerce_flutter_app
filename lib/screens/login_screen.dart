@@ -24,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
 
   final StorageService _storageService = StorageService();
+
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       final prefs = await SharedPreferences.getInstance();

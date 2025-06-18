@@ -38,6 +38,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
+    print("the token is: $token");
+
     if (token.isEmpty) {
       setState(() {
         _nameController.text = "Not logged in";
@@ -55,6 +57,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'Accept': 'application/json',
         },
       );
+
+      // final request = http.Request('GET', url);
+      // request.headers.addAll({
+      //   "Accept": "application/json",
+      //   "Content-Type": "application/json",
+      // });
+
+      // request.body = jsonDecode({"token": token});
+
+      // final response = await request.send();
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
