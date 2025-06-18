@@ -50,7 +50,9 @@ class _OrdersPageState extends State<OrdersPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/circle design.png'),
+            image: NetworkImage(
+              "https://www.google.com/url?sa=i&url=https%3A%2F%2Fpngtree.com%2Ffree-backgrounds-photos%2Fshopping-cart&psig=AOvVaw2o3hGPREx3hLVaxivYW_Uy&ust=1750321385475000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOjrubnF-o0DFQAAAAAdAAAAABAL",
+            ),
             fit: BoxFit.cover,
             opacity: 0.8,
           ),
