@@ -38,8 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    print("token is: '$token'");
-
     if (token.isEmpty) {
       setState(() {
         _nameController.text = "Not logged in";
@@ -57,9 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'Accept': 'application/json',
         },
       );
-
-      print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -103,99 +98,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bacgroundColor,
       appBar: AppBar(
-        title: Text("Profile", style: TextStyle(color: textColor)),
         backgroundColor: primaryColor,
+        title: Text('Profile', style: TextStyle(color: textColor)),
         actions: [
-          if (!_isEditing)
-            IconButton(
-              icon: Icon(Icons.edit, color: textColor),
-              onPressed: _toggleEditMode,
-            ),
-          if (_isEditing)
-            IconButton(
-              icon: Icon(Icons.save, color: textColor),
-              onPressed: _toggleEditMode,
-            ),
+          IconButton(
+            icon: Icon(_isEditing ? Icons.save : Icons.edit, color: textColor),
+            onPressed: _toggleEditMode,
+          ),
         ],
       ),
-      backgroundColor: bacgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(_imageUrlController.text),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            _isEditing
-                ? TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: primaryColor.withOpacity(0.3),
+                  backgroundImage: NetworkImage(_imageUrlController.text),
+                ),
+                const SizedBox(height: 20),
+                _isEditing
+                    ? _buildEditableField(
+                        controller: _nameController,
+                        label: "Name",
+                      )
+                    : _buildTextLabel(_nameController.text, 22, true),
+                const SizedBox(height: 12),
+                _isEditing
+                    ? _buildEditableField(
+                        controller: _emailController,
+                        label: "Email",
+                      )
+                    : _buildTextLabel(
+                        _emailController.text,
+                        16,
+                        false,
+                        opacity: 0.7,
+                      ),
+                const SizedBox(height: 12),
+                _isEditing
+                    ? _buildEditableField(
+                        controller: _imageUrlController,
+                        label: "Image URL",
+                      )
+                    : const SizedBox.shrink(),
+                const SizedBox(height: 30),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accentColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
                     ),
-                  )
-                : Text(
-                    _nameController.text,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-            const SizedBox(height: 10),
-            _isEditing
-                ? TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  )
-                : Text(
-                    _emailController.text,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: textColor.withOpacity(0.7),
-                    ),
-                  ),
-            const SizedBox(height: 10),
-            _isEditing
-                ? TextField(
-                    controller: _imageUrlController,
-                    decoration: InputDecoration(
-                      labelText: 'Image URL',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  )
-                : const SizedBox.shrink(),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(accentColor),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-              onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.clear();
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text("Logged out")));
-                Navigator.pop(context);
-              },
-              child: const Text("Logout"),
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.clear();
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text("Logged out")));
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.logout),
+                  label: const Text("Logout"),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildEditableField({
+    required TextEditingController controller,
+    required String label,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextLabel(
+    String text,
+    double fontSize,
+    bool bold, {
+    double opacity = 1,
+  }) {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: fontSize,
+        fontWeight: bold ? FontWeight.w600 : FontWeight.normal,
+        color: textColor.withOpacity(opacity),
       ),
     );
   }
